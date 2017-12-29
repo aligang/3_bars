@@ -1,5 +1,5 @@
-#!/usr/bin/env python3.5
-# -*- coding: utf-8 -*
+#!/usr/bin/env python3
+
 
 import json
 import math
@@ -33,21 +33,77 @@ def get_smallest_bar(object_representing_json):
     return smallest_bar
 
 
+def calculate_geo_distance(bar, user_defined_longitude, user_defined_latitude):
+    distance = vincenty(
+        (float(user_defined_longitude), float(user_defined_latitude)),
+        bar["geometry"]["coordinates"]
+    ).meters
+    return distance
+
+
 def get_closest_bar(object_representing_json,
                     user_defined_longitude, user_defined_latitude):
     bars_list = object_representing_json["features"]
     closest_bar = min(
         bars_list,
-        key=lambda bar: vincenty(
-            (float(user_defined_longitude), float(user_defined_latitude)),
-            tuple(bar["geometry"]["coordinates"])
-        ).meters
+        key=lambda bar: calculate_geo_distance(
+            bar,
+            user_defined_longitude,
+            user_defined_latitude
+        )
     )
-    distance = vincenty(
-            (float(user_defined_longitude), float(user_defined_latitude)),
-            tuple(closest_bar["geometry"]["coordinates"])
-    ).meters
+    distance = calculate_geo_distance(
+        closest_bar,
+        user_defined_longitude,
+        user_defined_latitude
+    )
     return closest_bar, distance
+
+
+def request_user_defined_coordinates():
+    user_defined_coordinates = input(
+        "Введите GPS координаты (например, 77.77, 88.88), "
+        "подыщем ближайший бар: "
+    )
+    while len(user_defined_coordinates.split(",")) != 2:
+        user_defined_coordinates = input(
+            "Неверно указан формат координат, укажите в формате "
+            "'77.77, 88.88' : "
+        )
+    user_defined_longitude,\
+        user_defined_latitude = user_defined_coordinates.split(",")
+    return user_defined_longitude, user_defined_latitude
+
+
+def get_pretty_output(biggest_bar, smallest_bar, closest_bar, distance):
+    print("Самый большой бар: {}".format(
+        biggest_bar['properties']['Attributes']['Name']
+        )
+    )
+    print("Который расположен по адресу: {}".format(
+        biggest_bar['properties']['Attributes']['Address']
+        )
+    )
+    print("Самый маленький бар: {}".format(
+        smallest_bar['properties']['Attributes']['Name']
+        )
+    )
+    print("Который расположен по адресу: {}".format(
+        smallest_bar['properties']['Attributes']['Address']
+        )
+    )
+    print("Ближайший бар : {}".format(
+        closest_bar['properties']['Attributes']['Name']
+        )
+    )
+    print("Который расположен по адресу: {}".format(
+        closest_bar['properties']['Attributes']['Address']
+        )
+    )
+    print("Находится на расстоянии: {} километров".format(
+        str(int(distance/1000))
+        )
+    )
 
 
 if __name__ == '__main__':
@@ -55,38 +111,14 @@ if __name__ == '__main__':
     if not os.path.exists(json_filepath):
         print("Такой файл не существует")
     else:
-        object_representing_json = load_data("bars.json")
+        object_representing_json = load_data(json_filepath)
+        user_defined_longitude,\
+            user_defined_latitude = request_user_defined_coordinates()
         biggest_bar = get_biggest_bar(object_representing_json)
         smallest_bar = get_smallest_bar(object_representing_json)
-        print("Самый большой бар: " +
-              biggest_bar['properties']['Attributes']['Name'])
-        print("Который расположен по адресу: " +
-              biggest_bar['properties']['Attributes']['Address'])
-        print("Самый маленький бар: " +
-              smallest_bar['properties']['Attributes']['Name'])
-        print("Который расположен по адресу: " +
-              smallest_bar['properties']['Attributes']['Address'])
-        user_defined_coordinates = input(
-            "Введите GPS координаты, подыщем ближайший бар: "
-        )
-        if "," in user_defined_coordinates:
-            user_defined_longitude, user_defined_latitude = re.split(
-                "\s*,+\s*",
-                user_defined_coordinates
-            )
-        else:
-            user_defined_longitude, user_defined_latitude = re.split(
-                "\s+",
-                user_defined_coordinates
-            )
         closest_bar, distance = get_closest_bar(
             object_representing_json,
             user_defined_longitude,
             user_defined_latitude
         )
-        print("Ближайший бар : " +
-              closest_bar['properties']['Attributes']['Name'])
-        print("Который расположен по адресу: " +
-              closest_bar['properties']['Attributes']['Address'])
-        print("Находится на расстоянии " +
-              str(int(distance/1000)) + " километров")
+        get_pretty_output(biggest_bar, smallest_bar, closest_bar, distance)
