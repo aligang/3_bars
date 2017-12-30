@@ -36,12 +36,12 @@ $ python3.5 bars.py <path to file>
 
 
 ## 5.Какие функции могут быть переиспользованы в вашем коде
-Функция `load_data` читает структуру raw-JSON из файла и преобразует её в python-обект.  
-Функция `get_biggest_bar` находит самый большой бар, упоминающийся в JSON,  
+Функция `load_data` читает структуру raw-JSON из файла, преобразует её в python-обект и возвращает список баров.  
+Функция `get_biggest_bar` находит самый большой бар, упоминающийся в списке,  
 возвращает dict в котором содержится информация об этом баре  
-Функция `get_smallest_bar` находит самый маленький бар, упоминающийся в JSON,  
+Функция `get_smallest_bar` находит самый маленький бар, упоминающийся в списке,  
 возвращает dict в котором содержится информация об этом баре  
-Функция `get_сloset_bar` находит ближайший бар, упоминающийся в JSON, отностительно координат, подаваемых как аргументы функции,  
+Функция `get_сloset_bar` находит ближайший бар, упоминающийся в списке, отностительно координат, подаваемых как аргументы функции,  
 возвращает dict в котором содержится информация об этом баре, а также float, которая отражает расстояние в метрах от заданных GPS координат до этого бара  
 Функция `request_user_defined_coordinates` запрашивает GPS координаты через поток ввода/вывода  
 Функция `get_pretty_output` выводит информацию о барах на поток ввода/вывода
@@ -55,8 +55,8 @@ from bars import get_biggest_bar
 from bars import get_smallest_bar
 
 object_representing_json = load_data(filepath)
-closest_bar = get_closet_bar(object_representing_json, user_defined_longitude, user_defined_latitude)
-biggest_bar = get_biggest_bar(object_representing_json, user_defined_longitude, user_defined_latitude)
+closest_bar = get_closet_bar(иbars_list, user_defined_longitude, user_defined_latitude)
+biggest_bar = get_biggest_bar(иbars_list, user_defined_longitude, user_defined_latitude)
 ```
 
 ## 6. Цели
