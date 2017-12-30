@@ -68,18 +68,12 @@ def request_user_defined_coordinates():
     user_defined_longitude = input("Широта : ")
     if not (re.match("\d+", user_defined_longitude)
             or re.match("\d+.\d*", user_defined_longitude)):
-        force_termination()
+        user_defined_longitude = None
     user_defined_latitude = input("Долгота : ")
     if not (re.match("\d+", user_defined_latitude)
             or re.match("\d+.\d*", user_defined_latitude)):
-        force_termination()
+        user_defined_latitude = None
     return user_defined_longitude, user_defined_latitude
-
-
-def force_termination():
-    sys.exit("Некорректное значение."
-             "\nПерезапустите программу и "
-             "введите аргументы в корректном формате")
 
 
 def get_pretty_output(output_template_form, bar, distance=None):
@@ -130,6 +124,10 @@ if __name__ == "__main__":
         user_defined_longitude, user_defined_latitude = (
             request_user_defined_coordinates()
         )
+        if user_defined_longitude == None or user_defined_latitude == None:
+            sys.exit("Некорректный формат значений GPS координат."
+                     "\nПерезапустите программу и "
+                     "введите аргументы в корректном формате")
         biggest_bar = get_biggest_bar(bars_list)
         smallest_bar = get_smallest_bar(bars_list)
         closest_bar, distance = get_closest_bar(
