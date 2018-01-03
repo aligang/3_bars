@@ -101,7 +101,6 @@ if __name__ == "__main__":
         user_defined_longitude, user_defined_latitude = (
             request_user_defined_coordinates()
         )
-        print(user_defined_longitude, user_defined_latitude)
         if user_defined_longitude is None or user_defined_latitude is None:
             sys.exit("Некорректный формат значений GPS координат."
                      "\nПерезапустите программу и "
