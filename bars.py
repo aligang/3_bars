@@ -73,7 +73,7 @@ def request_user_defined_coordinates():
     return user_defined_longitude, user_defined_latitude
 
 
-def get_pretty_output(bar_type, bar, distance=None):
+def print_pretty_output(bar_type, bar, distance=None):
     output_template_main = (
         "Самый {} бар: {}"
         "\nКоторый расположен по адресу: {}"
