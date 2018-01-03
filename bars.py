@@ -113,6 +113,6 @@ if __name__ == "__main__":
             user_defined_longitude,
             user_defined_latitude
         )
-        get_pretty_output("большой", biggest_bar)
-        get_pretty_output("маленький", smallest_bar)
-        get_pretty_output("ближайший", closest_bar, distance)
+        print_pretty_output("большой", biggest_bar)
+        print_pretty_output("маленький", smallest_bar)
+        print_pretty_output("ближайший", closest_bar, distance)
