@@ -74,25 +74,31 @@ def request_user_defined_coordinates():
 
 
 def print_pretty_output(bar_type, bar, distance=None):
-    output_template_main = (
+    bar_info_output_template = (
         "Самый {} бар: {}"
         "\nКоторый расположен по адресу: {}"
     )
-    output_template_suffix = "\nНаходится на расстоянии: {} километров"
+    distance_to_bar_output_template = (
+        "Находится на расстоянии: {} километров"
+    )
     bar_name = bar["properties"]["Attributes"]["Name"]
     bar_address = bar["properties"]["Attributes"]["Address"]
-    output_main = output_template_main.format(
-        bar_type,
-        bar_name,
-        bar_address
-    )
-    print(output_main)
+    print(bar_info_output_template.format(bar_type, bar_name, bar_address))
     if distance:
-        output_suffix = output_template_suffix.format(int(distance/1000))
-        print(output_suffix)
+        print(
+            distance_to_bar_output_template.format(
+                int(distance/1000)
+            )
+        )
 
 
 if __name__ == "__main__":
+    shell_input = sys.argv
+    if len(shell_input) < 2:
+        sys.exit(
+            "Не указан аргумент - файл."
+            "\nПерезапустите скрипт командой в формате "
+            "'python3 bars.py <path to file>'")
     json_filepath = sys.argv[1]
     if not os.path.exists(json_filepath):
         print("Такой файл не существует")
