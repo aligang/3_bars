@@ -65,53 +65,31 @@ def request_user_defined_coordinates():
     print("Введите GPS координаты подыщем ближайший бар "
           "(в формате int или float)")
     user_defined_longitude = input("Широта : ")
-    if not (re.match("\d+", user_defined_longitude)
-            or re.match("\d+.\d*", user_defined_longitude)):
+    if not re.match("\d+(\.\d+)?$", user_defined_longitude):
         user_defined_longitude = None
     user_defined_latitude = input("Долгота : ")
-    if not (re.match("\d+", user_defined_latitude)
-            or re.match("\d+.\d*", user_defined_latitude)):
+    if not re.match("\d+(\.\d+)?$", user_defined_latitude):
         user_defined_latitude = None
     return user_defined_longitude, user_defined_latitude
 
 
-def get_pretty_output(output_template_form, bar, distance=None):
-    generic_output_template = (
-        "бар: {}"
+def get_pretty_output(bar_type, bar, distance=None):
+    output_template_main = (
+        "Самый {} бар: {}"
         "\nКоторый расположен по адресу: {}"
     )
+    output_template_suffix = "\nНаходится на расстоянии: {} километров"
     bar_name = bar["properties"]["Attributes"]["Name"]
     bar_address = bar["properties"]["Attributes"]["Address"]
-    if output_template_form == "biggest":
-        output_template = " ".join(
-            [
-                "Самый большой",
-                generic_output_template
-            ]
-        )
-        output_text = output_template.format(bar_name, bar_address)
-    if output_template_form == "smallest":
-        output_template = " ".join(
-            [
-                "Самый маленький",
-                generic_output_template
-            ]
-        )
-        output_text = output_template.format(bar_name, bar_address)
-    if output_template_form == "closest":
-        output_template = " ".join(
-            [
-                "Ближайший",
-                generic_output_template,
-                "\nНаходится на расстоянии: {} километров"
-            ]
-        )
-        output_text = output_template.format(
-            bar_name,
-            bar_address,
-            str(int(distance/1000))
-        )
-    print(output_text)
+    output_main = output_template_main.format(
+        bar_type,
+        bar_name,
+        bar_address
+    )
+    print(output_main)
+    if distance:
+        output_suffix = output_template_suffix.format(int(distance/1000))
+        print(output_suffix)
 
 
 if __name__ == "__main__":
@@ -123,6 +101,7 @@ if __name__ == "__main__":
         user_defined_longitude, user_defined_latitude = (
             request_user_defined_coordinates()
         )
+        print(user_defined_longitude, user_defined_latitude)
         if user_defined_longitude is None or user_defined_latitude is None:
             sys.exit("Некорректный формат значений GPS координат."
                      "\nПерезапустите программу и "
@@ -134,6 +113,6 @@ if __name__ == "__main__":
             user_defined_longitude,
             user_defined_latitude
         )
-        get_pretty_output("biggest", biggest_bar)
-        get_pretty_output("smallest", smallest_bar)
-        get_pretty_output("closest", closest_bar, distance)
+        get_pretty_output("большой", biggest_bar)
+        get_pretty_output("маленький", smallest_bar)
+        get_pretty_output("ближайший", closest_bar, distance)
